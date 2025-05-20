@@ -14,26 +14,36 @@ if nombre:
     url = f"{API_BASE}/resolver_nombre_comun/{nombre}"
     response = requests.get(url)
 
-    if response.status_code == 200:
+    st.write("🔧 Debug:")
+    st.code(f"URL consultada: {url}")
+    st.code(f"Status: {response.status_code}")
+
+    try:
         datos = response.json()
-        opciones = [f"{d['nombre_comun']} → {d['nombre_cientifico']} (ID: {d['id_planta']})" for d in datos]
-        seleccion = st.selectbox("Selecciona una planta:", opciones)
+        st.json(datos)
 
-        id_planta = seleccion.split("ID: ")[-1].replace(")", "")
+        if response.status_code == 200 and isinstance(datos, list) and len(datos) > 0:
+            opciones = [f"{d['nombre_comun']} → {d['nombre_cientifico']} (ID: {d['id_planta']})" for d in datos]
+            seleccion = st.selectbox("Selecciona una planta:", opciones)
 
-        st.subheader("📘 Ficha completa")
-        ficha = requests.get(f"{API_BASE}/ficha_completa/{id_planta}").json()
+            id_planta = seleccion.split("ID: ")[-1].replace(")", "")
 
-        for tabla, registros in ficha.get("datos", {}).items():
-            st.markdown(f"### 🗂 {tabla}")
-            if isinstance(registros, list):
-                for i, r in enumerate(registros):
-                    with st.expander(f"🔸 Registro {i+1}"):
-                        st.json(r)
-            else:
-                st.json(registros)
-    else:
-        st.warning("❌ No se encontraron coincidencias en la base agroecológica.")
+            st.subheader("📘 Ficha completa")
+            ficha = requests.get(f"{API_BASE}/ficha_completa/{id_planta}").json()
+
+            for tabla, registros in ficha.get("datos", {}).items():
+                st.markdown(f"### 🗂 {tabla}")
+                if isinstance(registros, list):
+                    for i, r in enumerate(registros):
+                        with st.expander(f"🔸 Registro {i+1}"):
+                            st.json(r)
+                else:
+                    st.json(registros)
+        else:
+            st.warning("⚠️ No se encontraron coincidencias.")
+
+    except Exception as e:
+        st.error(f"❌ No se pudo decodificar la respuesta: {e}")
 
 st.markdown("---")
 st.caption("Casita de Semillas 🌾 • Explorador conectado a API agroecológica en Render")
