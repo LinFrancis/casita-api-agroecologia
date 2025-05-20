@@ -101,9 +101,3 @@ def ficha_completa(id_planta: str):
     return resultado
 
 
-cd casita-api-agroecologia
-git init
-git add .
-git commit -m "Primera versión FastAPI de la API agroecológica"
-git remote add origin git remote add origin https://github.com/LinFrancis/casita-api-agroecologia
-git push -u origin main
