@@ -1,0 +1,10 @@
+pandas
+openpyxl
+fuzzywuzzy
+python-Levenshtein
+fastapi
+uvicorn
+httpx
+python-dotenv
+streamlit
+python-multipart
